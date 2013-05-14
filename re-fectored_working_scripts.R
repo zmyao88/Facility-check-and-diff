@@ -70,8 +70,6 @@ order_testing(school, old_school)
 
 
 # Re-generate short_id to make sure the consistency
-shortid_generate <- function(df, prefix) 
-
 #education
 school <- shortid_generate(school, 'F')
 
@@ -85,11 +83,19 @@ short_id_test(hospital, old_hospital)
 
 
 # Take out the order column and output
+school_diff <- school[which(is.na(school$order)),]
+hospital_diff <- school[which(is.na(hospital$order)),]
+
+
+school_diff$order <- NULL
+school_diff$order <- NULL
 school$order <- NULL
 hospital$order <- NULL
 
-write.csv(school, 'FACILITY_LIST_schools.csv', row.names=F)
-write.csv(hospital, 'FACILITY_LIST_hospitals.csv', row.names=F)
 
+write.csv(school, './shord_id_fixed/FACILITY_LIST_schools_diff.csv', row.names=F)
+write.csv(hospital, './shord_id_fixed/FACILITY_LIST_hospitals_diff.csv', row.names=F)
 
+write.csv(school, './shord_id_fixed/FACILITY_LIST_schools_full.csv', row.names=F)
+write.csv(hospital, './shord_id_fixed/FACILITY_LIST_hospitals_full.csv', row.names=F)
 
