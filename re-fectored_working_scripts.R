@@ -83,18 +83,19 @@ short_id_test(hospital, old_hospital)
 
 
 # Take out the order column and output
-school_diff <- school[which(is.na(school$order)),]
-hospital_diff <- school[which(is.na(hospital$order)),]
+school_diff <- subset(school, is.na(school$order), 
+                      select=c("long_id", "lga_id", "zone", "state", "lga", "facility_name", 
+                                "facility_type", "managed_by", "ward", "community", "short_id"))
+hospital_diff <- subset(hospital, is.na(hospital$order), 
+                      select=c("long_id", "lga_id", "zone", "state", "lga", "facility_name", 
+                               "facility_type", "managed_by", "ward", "community", "short_id"))
 
-
-school_diff$order <- NULL
-school_diff$order <- NULL
 school$order <- NULL
 hospital$order <- NULL
 
 
-write.csv(school, './shord_id_fixed/FACILITY_LIST_schools_diff.csv', row.names=F)
-write.csv(hospital, './shord_id_fixed/FACILITY_LIST_hospitals_diff.csv', row.names=F)
+write.csv(school_diff, './shord_id_fixed/FACILITY_LIST_schools_diff.csv', row.names=F)
+write.csv(hospital_diff, './shord_id_fixed/FACILITY_LIST_hospitals_diff.csv', row.names=F)
 
 write.csv(school, './shord_id_fixed/FACILITY_LIST_schools_full.csv', row.names=F)
 write.csv(hospital, './shord_id_fixed/FACILITY_LIST_hospitals_full.csv', row.names=F)
