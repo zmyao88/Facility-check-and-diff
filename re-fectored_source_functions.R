@@ -1,4 +1,3 @@
-setwd('c:/Users/zmyao/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/in_process_data/facility_lists/')
 library(plyr)
 library(gdata)
 library(digest)
@@ -9,25 +8,6 @@ library(stringr)
     if (any(rows)) {
         set(dt, rows, cols, value) }}
 
-old_hospital <- read.csv('Facility list snapshot/facility_list_hospitals_May_06.csv', stringsAsFactors=F)
-row.names(old_hospital) <- NULL
-old_hospital$order <- as.numeric(row.names(old_hospital))
-old_hospital_copy <- old_hospital
-
-old_school <- read.csv('Facility list snapshot/FACILITY_LIST_schools_May_06.csv', stringsAsFactors=F)
-row.names(old_school) <- NULL
-old_school$order <- as.numeric(row.names(old_school))
-
-
-
-
-
-
-new_hospital <- read.csv('facility_list_hospitals.csv', stringsAsFactors=F)
-new_school <- read.csv('FACILITY_LIST_schools.csv', stringsAsFactors=F)
-
-dict <- read.csv('Mapping_dict.csv', stringsAsFactors=F)
-
 # Long_id test
 # If the output is 0 then long_ids are consistent
 test_unmatch_long_id <- function(old_df, new_df, by_val = 'long_id')
@@ -35,13 +15,6 @@ test_unmatch_long_id <- function(old_df, new_df, by_val = 'long_id')
     test <- match_df(new_df, old_df, on = by_val)
     print(nrow(old_df) - nrow(test))
 }
-
-# hospital
-test_unmatch_long_id(old_df=old_hospital, new_df=new_hospital)
-
-# school
-test_unmatch_long_id(old_df=old_school, new_df=new_school)
-
 
 # Function for replace long_id with 'new' long_id
 long_id_update <- function(old_df, dict)
@@ -57,14 +30,8 @@ long_id_update <- function(old_df, dict)
     return(old_df)
 }
 
-# update long_id in old_hospital
-old_hospital <- long_id_update(old_hospital, dict=dict)
 
-# Keep testing
-test_unmatch_long_id(old_df=old_hospital, new_df=new_hospital)
-
-
-####
+# Further testing of unmatched data
 test_unmatched_id_2 <- function(df)
 {
     test <- length(which(is.na(df$lga_id)))
@@ -75,28 +42,7 @@ test_unmatched_id_2 <- function(df)
     }
 } 
 
-#### Pt2
-
-
-# Hospital
-old_hosp_order <- subset(old_hospital, select=c("long_id" , "order"))
-hospital <- merge(new_hospital, old_hosp_order, by='long_id', all=T)
-hospital <- arrange(hospital, order, na.last=T)
-
-# Schools
-old_sch_order <- subset(old_school, select=c("long_id" , "order"))
-school <- merge(new_school, old_sch_order, by='long_id', all=T)
-school <- arrange(school, order, na.last=T)
-
-
-# Test on hospital
-test_unmatched_id_2(hospital)
-
-# Test on school, No long_id un-consistency detected
-# thus No need to do the re-freshing part downwards for school 
-test_unmatched_id_2(school)
-
-
+# Re-freshing function fill in NA's for those unmatched old data
 long_id_refresh_pt2 <- function(combined_df, original_copy)
 {
     
@@ -115,16 +61,15 @@ long_id_refresh_pt2 <- function(combined_df, original_copy)
         combined_df[combined_df$long_id == l_id, c("lga_id", "zone", "state", "lga", "facility_name", 
                                                    "facility_type", "ward", "community", "managed_by", "short_id", 
                                                    "order")] <- original_copy[original_copy$long_id == l_id, c("lga_id", "zone", "state", "lga", "facility_name", 
-                                                                                                                       "facility_type", "ward", "community", "managed_by", "short_id", 
-                                                                                                                       "order")]
+                                                                                                               "facility_type", "ward", "community", "managed_by", "short_id", 
+                                                                                                               "order")]
     }
     print("After refreshing:")
     test_unmatched_id_2(combined_df)
     return(combined_df)
 }
 
-hospital <- long_id_refresh_pt2(combined_df=hospital, original_copy=old_hospital_copy)
-
+# Test order consistency
 order_testing <- function(cmobined_df, old_df)
 {
     cmobined_df$test <- 1:nrow(cmobined_df)
@@ -148,10 +93,6 @@ order_testing <- function(cmobined_df, old_df)
             print( paste("There are still", n2, "long ids are wrong", sep=' ')))
     
 }
-
-order_testing(hospital, old_hospital)
-order_testing(school, old_school)
-
 
 # Re-generate short_id to make sure the consistency
 shortid_generate <- function(df, prefix) 
@@ -177,12 +118,6 @@ shortid_generate <- function(df, prefix)
     return(df) 
 }
 
-#education
-school <- shortid_generate(school, 'F')
-
-#health
-hospital <- shortid_generate(hospital, 'F')
-
 
 # Test shor_ids
 short_id_test <- function(df, old_df)
@@ -206,18 +141,4 @@ short_id_test <- function(df, old_df)
     print( paste("# of NOT unique short_id:", n3, sep = ' '))
     print( paste("# of NOT unique long_id:", n4, sep = ' '))
 }
-
-
-short_id_test(school, old_school)
-short_id_test(hospital, old_hospital)
-
-
-# Take out the order column and output
-school$order <- NULL
-hospital$order <- NULL
-
-write.csv(school, 'FACILITY_LIST_schools.csv', row.names=F)
-write.csv(hospital, 'FACILITY_LIST_hospitals.csv', row.names=F)
-
-
 
