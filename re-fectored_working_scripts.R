@@ -1,18 +1,22 @@
 setwd('c:/Users/zmyao/Dropbox/Nigeria/Nigeria 661 Baseline Data Cleaning/in_process_data/facility_lists/')
 source('C:/Users/zmyao/Documents/GitHub/Facility-check-and-diff/re-fectored_source_functions.R')
 
+#^. To Use:
+# 1. Change the directory of source function
+# 2. Change the directory of old_hospital & old_school to latest snap shot
+# 3. save the output into snap shot folder after being refreshed by Myf
 
 ##################
 # Importing data #
 ##################
 
 # Old data source from snap shot
-old_hospital <- read.csv('Facility list snapshot/facility_list_hospitals_May_06.csv', stringsAsFactors=F)
+old_hospital <- read.csv('Facility list snapshot/FACILITY_LIST_hospitals_full_may_14.csv', stringsAsFactors=F)
 row.names(old_hospital) <- NULL
 old_hospital$order <- as.numeric(row.names(old_hospital))
 old_hospital_copy <- old_hospital
 
-old_school <- read.csv('Facility list snapshot/FACILITY_LIST_schools_May_06.csv', stringsAsFactors=F)
+old_school <- read.csv('Facility list snapshot/FACILITY_LIST_schools_full_may_14.csv', stringsAsFactors=F)
 row.names(old_school) <- NULL
 old_school$order <- as.numeric(row.names(old_school))
 
