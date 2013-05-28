@@ -11,14 +11,16 @@ source('C:/Users/zmyao/Documents/GitHub/Facility-check-and-diff/re-fectored_sour
 ##################
 
 # Old data source from snap shot
-old_hospital <- read.csv('Facility list snapshot/FACILITY_LIST_hospitals_full_may_18.csv', stringsAsFactors=F)
+old_hospital <- read.csv('Facility list snapshot/FACILITY_LIST_hospitals_full_may_21.csv', stringsAsFactors=F)
 row.names(old_hospital) <- NULL
 old_hospital$order <- as.numeric(row.names(old_hospital))
 old_hospital_copy <- old_hospital
 
-old_school <- read.csv('Facility list snapshot/FACILITY_LIST_schools_full_may_18.csv', stringsAsFactors=F)
+old_school <- read.csv('Facility list snapshot/FACILITY_LIST_schools_full_may_21.csv', stringsAsFactors=F)
 row.names(old_school) <- NULL
 old_school$order <- as.numeric(row.names(old_school))
+old_school_copy <- old_school
+
 
 
 # new data just come into formhub
@@ -68,6 +70,8 @@ test_unmatched_id_2(school)
 # Re-freshing function fill in NA's for those unmatched old data
 hospital <- long_id_refresh_pt2(combined_df=hospital, original_copy=old_hospital_copy)
 
+school <- long_id_refresh_pt2(combined_df=school, original_copy=old_school_copy)
+
 # Test order consistency
 order_testing(hospital, old_hospital)
 order_testing(school, old_school)
@@ -98,9 +102,9 @@ school$order <- NULL
 hospital$order <- NULL
 
 
-write.csv(school_diff, './shord_id_fixed/FACILITY_LIST_schools_diff.csv', row.names=F)
-write.csv(hospital_diff, './shord_id_fixed/FACILITY_LIST_hospitals_diff.csv', row.names=F)
+write.csv(school_diff, './short_id_fixed/FACILITY_LIST_schools_diff.csv', row.names=F)
+write.csv(hospital_diff, './short_id_fixed/FACILITY_LIST_hospitals_diff.csv', row.names=F)
 
-write.csv(school, './shord_id_fixed/FACILITY_LIST_schools_full.csv', row.names=F)
-write.csv(hospital, './shord_id_fixed/FACILITY_LIST_hospitals_full.csv', row.names=F)
+write.csv(school, './short_id_fixed/FACILITY_LIST_schools_full.csv', row.names=F)
+write.csv(hospital, './short_id_fixed/FACILITY_LIST_hospitals_full.csv', row.names=F)
 
