@@ -11,12 +11,12 @@ source('C:/Users/zmyao/Documents/GitHub/Facility-check-and-diff/re-fectored_sour
 ##################
 
 # Old data source from snap shot
-old_hospital <- read.csv('Facility list snapshot/FACILITY_LIST_hospitals_full_may_21.csv', stringsAsFactors=F)
+old_hospital <- read.csv('Facility list snapshot/FACILITY_LIST_hospitals_full_may_28.csv', stringsAsFactors=F)
 row.names(old_hospital) <- NULL
 old_hospital$order <- as.numeric(row.names(old_hospital))
 old_hospital_copy <- old_hospital
 
-old_school <- read.csv('Facility list snapshot/FACILITY_LIST_schools_full_may_21.csv', stringsAsFactors=F)
+old_school <- read.csv('Facility list snapshot/FACILITY_LIST_schools_full_may_28.csv', stringsAsFactors=F)
 row.names(old_school) <- NULL
 old_school$order <- as.numeric(row.names(old_school))
 old_school_copy <- old_school
@@ -32,6 +32,7 @@ dict <- read.csv('Mapping_dict.csv', stringsAsFactors=F)
 
 # Long_id test
 # If the output is 0 then long_ids are consistent
+# If there are negative value then there's duplicate value in long_id
 # hospital
 test_unmatch_long_id(old_df=old_hospital, new_df=new_hospital)
 
@@ -88,6 +89,13 @@ hospital <- shortid_generate(hospital, 'F')
 # Test shor_ids
 short_id_test(school, old_school)
 short_id_test(hospital, old_hospital)
+
+
+#Take out the records with duplicated long_ids
+school <- subset(school, !duplicated(long_id))
+hospital <- subset(hospital, !duplicated(long_id))
+
+
 
 
 # Take out the order column and output
